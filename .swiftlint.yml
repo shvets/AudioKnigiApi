@@ -1,0 +1,48 @@
+included:
+  - Sources
+  - Tests
+
+opt_in_rules:
+  - empty_count
+  - force_unwrapping
+  - private_outlet
+  - closure_end_indentation
+  - closure_spacing
+  - fatal_error_message
+  - operator_usage_whitespace
+  - redundant_nil_coalescing
+  - switch_case_on_newline
+  - attributes
+  - no_extension_access_modifier
+
+disabled_rules:
+  - trailing_whitespace
+  - force_unwrapping
+  - force_cast
+  - cyclomatic_complexity
+  - statement_position
+  - trailing_comma
+  - line_length
+  - file_length
+  - function_body_length
+  - type_body_length
+  - identifier_name
+
+line_length: 200
+#file_length:
+#  warning: 500
+#  error: 600
+type_body_length:
+  warning: 300
+  error: 400
+
+reporter: "xcode"
+warning_threshold: 15
+
+
+large_tuple: 4
+
+cyclomatic_complexity: 15
+
+nesting:
+  type_level: 2
