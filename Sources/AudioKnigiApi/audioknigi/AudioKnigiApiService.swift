@@ -6,6 +6,8 @@ import SimpleHttpClient
 open class AudioKnigiApiService {
   public static let SiteUrl = "https://akniga.org"
 
+  private static let AES = CryptoJS.AES()
+
   let apiClient = ApiClient(URL(string: SiteUrl)!)
 
   public init() {}
@@ -272,7 +274,14 @@ open class AudioKnigiApiService {
       }
     }
 
-    return newTracks
+    return newTracks.map { track in
+      if let url = track.url?.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
+        return Track(albumName: track.albumName ?? "", title: track.title, url: url, time: track.time)
+      }
+      else {
+        return track
+      }
+    }
   }
 
   func requestTracks(path: String, content: String, cookie: String) throws -> [Track] {
@@ -377,9 +386,7 @@ open class AudioKnigiApiService {
   func getSecurityParams(bid: Int, securityLsKey: String) -> String {
     let secretPassphrase = "EKxtcg46V";
 
-    let AES = CryptoJS.AES()
-
-    let encrypted = AES.encrypt("\"" + securityLsKey + "\"", password: secretPassphrase)
+    let encrypted = AudioKnigiApiService.AES.encrypt("\"" + securityLsKey + "\"", password: secretPassphrase)
 
     let ct = encrypted[0]
     let iv = encrypted[1]
