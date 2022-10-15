@@ -242,9 +242,9 @@ open class AudioKnigiApiService {
     var queryItems: Set<URLQueryItem> = []
     queryItems.insert(URLQueryItem(name: "q", value: query))
 
-    if let response = try apiClient.request(path, queryItems: queryItems),
-       let data = response.data,
-       let document = try data.toDocument() {
+    let response = try apiClient.request(path, queryItems: queryItems)
+
+    if let data = response.data, let document = try data.toDocument() {
       result = try getBookItems(document, path: path, page: page)
     }
 
@@ -260,9 +260,7 @@ open class AudioKnigiApiService {
 
     let response = try apiClient.request(path)
 
-    if let securityLsKey = securityLsKey, let response = response,
-       let data = response.data,
-       let document = try data.toDocument() {
+    if let securityLsKey = securityLsKey, let data = response.data, let document = try data.toDocument() {
       if let bookId = try getBookId(document: document) {
         let securityParams = getSecurityParams(bid: bookId, securityLsKey: securityLsKey)
 
@@ -293,8 +291,9 @@ open class AudioKnigiApiService {
     //headers.append(HttpHeader(field: "cookie", value: cookie))
     headers.insert(HttpHeader(field: "user-agent", value: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36"))
 
-    if let body = content.data(using: .utf8, allowLossyConversion: false),
-       let response = try apiClient.request(path, method: .post, headers: headers, body: body) {
+    if let body = content.data(using: .utf8, allowLossyConversion: false) {
+      let response = try apiClient.request(path, method: .post, headers: headers, body: body)
+
       if let data1 = response.data, let tracks = try apiClient.decode(data1, to: Tracks.self) {
         if let data2 = tracks.aItems.data(using: .utf8), let items = try apiClient.decode(data2, to: [Track].self) {
           newTracks = items
@@ -452,7 +451,9 @@ open class AudioKnigiApiService {
   public func getDocument(_ path: String = "", queryItems: Set<URLQueryItem> = []) throws -> Document? {
     var document: Document? = nil
 
-    if let response = try apiClient.request(path, queryItems: queryItems), let data = response.data {
+    let response = try apiClient.request(path, queryItems: queryItems)
+
+    if let data = response.data {
       document = try data.toDocument()
     }
 
