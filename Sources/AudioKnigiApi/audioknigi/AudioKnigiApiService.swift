@@ -10,6 +10,9 @@ open class AudioKnigiApiService {
 
   let apiClient = ApiClient(URL(string: SiteUrl)!)
 
+  public static let Authors = getItemsInGroups(Bundle.module.path(forResource: "authors-in-groups", ofType: "json")!)
+  public static let Performers = getItemsInGroups(Bundle.module.path(forResource: "performers-in-groups", ofType: "json")!)
+
   public init() {}
 
   public static func getURLPathOnly(_ url: String, baseUrl: String) -> String {
@@ -426,7 +429,7 @@ open class AudioKnigiApiService {
     return matched
   }
 
-  public func getItemsInGroups(_ fileName: String) -> [NameClassifier.ItemsGroup] {
+  public static func getItemsInGroups(_ fileName: String) -> [NameClassifier.ItemsGroup] {
     var items: [NameClassifier.ItemsGroup] = []
 
     do {

@@ -33,7 +33,9 @@ open class CryptoJS {
 //
 //        return bundle!
 
-      return Bundle.main
+        //Bundle.main
+        //Bundle(for: AudioKnigiApiService.self)
+        Bundle.module
     }
 
     open class AES: CryptoJS {

@@ -26,12 +26,15 @@ let package = Package(
         "SwiftSoup",
         "Codextended"
       ],
-      exclude: [
-        "cryptojs/components/aes.js"
+//      exclude: [
+//        "cryptojs/components/aes.js"
+//      ],
+      resources: [
+        .process("cryptojs/components/aes.js"),
+        .process("Resources"),
+//        .process("Resources/authors-in-groups.json"),
+//        .process("Resources/performers-in-groups.json")
       ]
-//      resources: [
-//        .process("cryptojs/components/aes.js")
-//      ]
     ),
     .testTarget(
       name: "AudioKnigiApiTests",
