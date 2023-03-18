@@ -6,24 +6,24 @@ import Files
 class AudioKnigiServiceTests: XCTestCase {
   var subject = AudioKnigiApiService()
 
-  func testGetAuthorsLetters() throws {
-    let result = try subject.getAuthorsLetters()
+  func testGetAuthorsLetters() async throws {
+    let result = try await subject.getAuthorsLetters()
 
     print(try result.prettify())
 
     XCTAssert(result.count > 0)
   }
 
-  func testGetNewBooks() throws {
-    let result = try subject.getNewBooks()
+  func testGetNewBooks() async throws {
+    let result = try await subject.getNewBooks()
 
     print(try result.prettify())
 
     XCTAssert(result.items.count > 0)
   }
 
-  func testGetBestBooks() throws {
-    let result = try subject.getBestBooks()
+  func testGetBestBooks() async throws {
+    let result = try await subject.getBestBooks()
 
     print(try result.prettify())
 
@@ -58,11 +58,11 @@ class AudioKnigiServiceTests: XCTestCase {
 //    waitForExpectations(timeout: 10, handler: nil)
 //  }
 
-  func testGetAuthorBooks() throws {
-    let result = try subject.getAuthors()
+  func testGetAuthorBooks() async throws {
+    let result = try await subject.getAuthors()
 
     if let id = result.items.first!["id"] {
-      let books = try subject.getBooks(path: id)
+      let books = try await subject.getBooks(path: id)
 
       print(try books.prettify())
 
@@ -70,11 +70,11 @@ class AudioKnigiServiceTests: XCTestCase {
     }
   }
 
-  func testGetPerformersBooks() throws {
-    let result = try subject.getPerformers()
+  func testGetPerformersBooks() async throws {
+    let result = try await subject.getPerformers()
 
     if let id = result.items.first!["id"] {
-      let books = try subject.getBooks(path: id)
+      let books = try await subject.getBooks(path: id)
 
       print(try books.prettify())
 
@@ -82,42 +82,42 @@ class AudioKnigiServiceTests: XCTestCase {
     }
   }
 
-  func testGetAuthors() throws {
-    let result = try subject.getAuthors()
+  func testGetAuthors() async throws {
+    let result = try await subject.getAuthors()
 
     print(try result.prettify())
 
     XCTAssert(result.items.count > 0)
   }
 
-  func testGetPerformers() throws {
-    let result = try subject.getPerformers()
+  func testGetPerformers() async throws {
+    let result = try await subject.getPerformers()
 
     print(try result.prettify())
 
     XCTAssert(result.items.count > 0)
   }
 
-  func testGetAllGenres() throws {
-    let result = try subject.getGenres(page: 1)
+  func testGetAllGenres() async throws {
+    let result = try await subject.getGenres(page: 1)
 
     print(try result.prettify())
 
     XCTAssert(result.count > 0)
 
-    let result2 = try subject.getGenres(page: 2)
+    let result2 = try await subject.getGenres(page: 2)
 
     print(try result2.prettify())
 
     XCTAssert(result2.count > 0)
   }
 
-  func testGetGenre() throws {
-    let genres = try subject.getGenres(page: 1)
+  func testGetGenre() async throws {
+    let genres = try await subject.getGenres(page: 1)
 
     if let item = genres.first {
       if let id = item["id"] {
-        let genre = try subject.getGenre(path: id)
+        let genre = try await subject.getGenre(path: id)
 
         print(try genre.prettify())
 
@@ -126,8 +126,8 @@ class AudioKnigiServiceTests: XCTestCase {
     }
   }
 
-  func testPagination() throws {
-    let result1 = try subject.getNewBooks(page: 1)
+  func testPagination() async throws {
+    let result1 = try await subject.getNewBooks(page: 1)
 
     // print(try result1.prettify())
 
@@ -137,7 +137,7 @@ class AudioKnigiServiceTests: XCTestCase {
       XCTAssertEqual(pagination1.page, 1)
     }
 
-    let result2 = try subject.getNewBooks(page: 2)
+    let result2 = try await subject.getNewBooks(page: 2)
 
     if let pagination2 = result2.pagination {
       XCTAssertEqual(pagination2.has_next, true)
@@ -146,10 +146,10 @@ class AudioKnigiServiceTests: XCTestCase {
     }
   }
 
-  func testGetAudioTracks() throws {
+  func testGetAudioTracks() async throws {
     let url = "\(AudioKnigiApiService.SiteUrl)/pratchett-terri-volnyy-narodec"
 
-    let result = try subject.getAudioTracks(url)
+    let result = try await subject.getAudioTracks(url)
 
     print(try result.prettify())
 
@@ -157,10 +157,10 @@ class AudioKnigiServiceTests: XCTestCase {
     XCTAssert(result.count > 0)
   }
 
-  func testSearch() throws {
+  func testSearch() async throws {
     let query = "пратчетт"
 
-    let result = try subject.search(query)
+    let result = try await subject.search(query)
 
     print(try result.prettify())
 
@@ -180,12 +180,12 @@ class AudioKnigiServiceTests: XCTestCase {
     XCTAssert(classified.count > 0)
   }
 
-  func _testGenerateAuthorsList() throws {
-    try generateAuthorsList("authors.json")
+  func _testGenerateAuthorsList() async throws {
+    try await generateAuthorsList("authors.json")
   }
 
-  func _testGeneratePerformersList() throws {
-    try generatePerformersList("performers.json")
+  func _testGeneratePerformersList() async throws {
+    try await generatePerformersList("performers.json")
   }
 
   func testGenerateAuthorsInGroupsList() throws {
@@ -224,12 +224,12 @@ class AudioKnigiServiceTests: XCTestCase {
     try folder.createFile(named: "performers-in-groups.json", contents: data2)
   }
 
-  private func generateAuthorsList(_ fileName: String) throws {
+  private func generateAuthorsList(_ fileName: String) async throws {
     var list = [Any]()
 
     print("Visiting page 1")
 
-    let result = try subject.getAuthors()
+    let result = try await subject.getAuthors()
 
     list += result.items
 
@@ -240,7 +240,7 @@ class AudioKnigiServiceTests: XCTestCase {
     for page in (2...pages) {
       print("Visiting page \(page)")
 
-      let result2 = try subject.getAuthors(page: page)
+      let result2 = try await subject.getAuthors(page: page)
 
       list += result2.items
     }
@@ -251,12 +251,12 @@ class AudioKnigiServiceTests: XCTestCase {
     try folder.createFile(named: fileName, contents: try asPrettifiedData(filteredList))
   }
 
-  private func generatePerformersList(_ fileName: String) throws {
+  private func generatePerformersList(_ fileName: String) async throws {
     var list = [Any]()
 
     print("Visiting page 1")
 
-    let result = try subject.getPerformers()
+    let result = try await subject.getPerformers()
 
     list += result.items
 
@@ -267,7 +267,7 @@ class AudioKnigiServiceTests: XCTestCase {
     for page in (2...pages) {
       print("Visiting page \(page)")
 
-      let result2 = try subject.getPerformers(page: page)
+      let result2 = try await subject.getPerformers(page: page)
 
       list += result2.items
     }

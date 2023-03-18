@@ -28,12 +28,12 @@ open class AudioKnigiApiService {
     }
   }
 
-  public func getAuthorsLetters() throws -> [String] {
+  public func getAuthorsLetters() async throws -> [String] {
     var result = [String]()
 
     let path = "/authors/"
 
-    if let document = try getDocument(path) {
+    if let document = try await getDocument(path) {
       let items = try document.select("ul[id='author-prefix-filter'] li a")
 
       for item in items.array() {
@@ -46,15 +46,15 @@ open class AudioKnigiApiService {
     return result
   }
 
-  public func getNewBooks(page: Int=1) throws -> BookResults {
-    try getBooks(path: "/index/", page: page)
+  public func getNewBooks(page: Int=1) async throws -> BookResults {
+    try await getBooks(path: "/index/", page: page)
   }
 
-  public func getBestBooks(page: Int=1, period: String? = nil) throws -> BookResults {
-    try getBooks(path: "/index/top/", page: page, period: period)
+  public func getBestBooks(page: Int=1, period: String? = nil) async throws -> BookResults {
+    try await getBooks(path: "/index/top/", page: page, period: period)
   }
 
-  public func getBooks(path: String, page: Int=1, period: String? = nil) throws -> BookResults {
+  public func getBooks(path: String, page: Int=1, period: String? = nil) async throws -> BookResults {
     var result = BookResults()
 
     //let encodedPath = path.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlQueryAllowed)!
@@ -67,7 +67,7 @@ open class AudioKnigiApiService {
       queryItems.insert(URLQueryItem(name: "period", value: period))
     }
 
-    if let document = try getDocument(pagePath, queryItems: queryItems) {
+    if let document = try await getDocument(pagePath, queryItems: queryItems) {
       result = try getBookItems(document, path: path, page: page)
     }
 
@@ -94,21 +94,21 @@ open class AudioKnigiApiService {
     return BookResults(items: items, pagination: pagination)
   }
 
-  public func getAuthors(page: Int=1) throws -> BookResults {
-    try getCollection(path: "/authors/", page: page)
+  public func getAuthors(page: Int=1) async throws -> BookResults {
+    try await getCollection(path: "/authors/", page: page)
   }
 
-  public func getPerformers(page: Int=1) throws -> BookResults {
-    try getCollection(path: "/performers/", page: page)
+  public func getPerformers(page: Int=1) async throws -> BookResults {
+    try await getCollection(path: "/performers/", page: page)
   }
 
-  func getCollection(path: String, page: Int=1) throws -> BookResults {
+  func getCollection(path: String, page: Int=1) async throws -> BookResults {
     var collection = [BookItem]()
     var pagination = Pagination()
 
     let pagePath = getPagePath(path: path, page: page)
 
-    if let document = try getDocument(pagePath) {
+    if let document = try await getDocument(pagePath) {
       let items = try document.select("td[class=cell-name]")
 
       for item: Element in items.array() {
@@ -123,7 +123,7 @@ open class AudioKnigiApiService {
         let id = String(href[index ..< href.endIndex]) + "/"
 
         if let filteredId = id.removingPercentEncoding {
-          collection.append(["type": "collection", "id": filteredId, "name": name, "thumb": thumb]) 
+          collection.append(["type": "collection", "id": filteredId, "name": name, "thumb": thumb])
         }
       }
 
@@ -135,13 +135,13 @@ open class AudioKnigiApiService {
     return BookResults(items: collection, pagination: pagination)
   }
 
-  public func getGenres(page: Int=1) throws ->  [BookItem] {
+  public func getGenres(page: Int=1) async throws ->  [BookItem] {
     var collection = [BookItem]()
     //var pagination = Pagination()
 
     let path = getPagePath(path: "/sections/", page: page)
 
-    if let document = try getDocument(path) {
+    if let document = try await getDocument(path) {
       let items = try document.select("td[class=cell-name]")
 
       for item: Element in items.array() {
@@ -164,8 +164,8 @@ open class AudioKnigiApiService {
     return collection
   }
 
-  func getGenre(path: String, page: Int=1) throws -> BookResults {
-    try getBooks(path: path, page: page)
+  func getGenre(path: String, page: Int=1) async throws -> BookResults {
+    try await getBooks(path: path, page: page)
   }
 
   func extractPaginationData(document: Document, path: String, page: Int) throws -> Pagination {
@@ -174,9 +174,9 @@ open class AudioKnigiApiService {
     let items = try document.select("div[class=paging] div[class=page__nav] a[class=page__nav--standart]")
 
     //if paginationRoot.size() > 0 {
-      //let paginationBlock = paginationRoot.get(0)
+    //let paginationBlock = paginationRoot.get(0)
 
-      //let items = try paginationRoot.select("a")
+    //let items = try paginationRoot.select("a")
 
     if items.count > 0 {
       let lastLink = items.get(items.size() - 1)
@@ -186,8 +186,8 @@ open class AudioKnigiApiService {
       pages = 1
     }
 
-      //if lastLink.size() == 1 {
-        //lastLink = try items.get(items.size() - 2)
+    //if lastLink.size() == 1 {
+    //lastLink = try items.get(items.size() - 2)
 
 //        if try lastLink.text() == "последняя" {
 //          let link = try lastLink.select("a").attr("href")
@@ -215,8 +215,8 @@ open class AudioKnigiApiService {
 //          pages = try Int(lastLink.text())!
 //    pages = try Int(lastLink.text())!
 //        }
-      //}
-      //else {
+    //}
+    //else {
 //        let href = try items.attr("href")
 //
 //        let pattern = path + "page"
@@ -228,8 +228,8 @@ open class AudioKnigiApiService {
 //          index2 = href.endIndex-1
 //        }
 
-        //pages = href[index1+pattern.length..index2].to_i
-      //}
+    //pages = href[index1+pattern.length..index2].to_i
+    //}
     //}
 
     return Pagination(page: page, pages: pages, has_previous: page > 1, has_next: page < pages)
@@ -395,10 +395,10 @@ open class AudioKnigiApiService {
     let salt = encrypted[2]
 
     let hashString = "{" +
-      "\"ct\":\"" + ct + "\"," +
-      "\"iv\":\"" + iv + "\"," +
-      "\"s\":\"" + salt + "\"" +
-      "}"
+        "\"ct\":\"" + ct + "\"," +
+        "\"iv\":\"" + iv + "\"," +
+        "\"s\":\"" + salt + "\"" +
+        "}"
 
     let hash = hashString
       .replacingOccurrences(of: "{", with: "%7B")
@@ -451,10 +451,10 @@ open class AudioKnigiApiService {
     return items
   }
 
-  public func getDocument(_ path: String = "", queryItems: Set<URLQueryItem> = []) throws -> Document? {
+  public func getDocument(_ path: String = "", queryItems: Set<URLQueryItem> = []) async throws -> Document? {
     var document: Document? = nil
 
-    let response = try apiClient.request(path, queryItems: queryItems)
+    let response = try await apiClient.requestAsync(path, queryItems: queryItems)
 
     if let data = response.data {
       document = try data.toDocument()
