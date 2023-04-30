@@ -235,7 +235,7 @@ open class AudioKnigiApiService {
     return Pagination(page: page, pages: pages, has_previous: page > 1, has_next: page < pages)
   }
 
-  public func search(_ query: String, page: Int=1) throws -> BookResults {
+  public func search(_ query: String, page: Int=1) async throws -> BookResults {
     var result = BookResults()
 
     let path = getPagePath(path: "/search/books/", page: page)
@@ -245,7 +245,7 @@ open class AudioKnigiApiService {
     var queryItems: Set<URLQueryItem> = []
     queryItems.insert(URLQueryItem(name: "q", value: query))
 
-    let response = try apiClient.request(path, queryItems: queryItems)
+    let response = try await apiClient.requestAsync(path, queryItems: queryItems)
 
     if let data = response.data, let document = try data.toDocument() {
       result = try getBookItems(document, path: path, page: page)

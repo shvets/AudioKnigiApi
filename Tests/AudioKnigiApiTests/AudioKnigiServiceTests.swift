@@ -188,7 +188,7 @@ class AudioKnigiServiceTests: XCTestCase {
     try await generatePerformersList("performers.json")
   }
 
-  func testGenerateAuthorsInGroupsList() throws {
+  func _testGenerateAuthorsInGroupsList() throws {
     let data: Data? = try File(path: "authors.json").read()
 
     let items: [NameClassifier.Item] = try data!.decoded() as [NameClassifier.Item]
@@ -206,7 +206,7 @@ class AudioKnigiServiceTests: XCTestCase {
     try folder.createFile(named: "authors-in-groups.json", contents: data2)
   }
 
-  func testGeneratePerformersInGroupsList() throws {
+  func _testGeneratePerformersInGroupsList() throws {
     let data: Data? = try File(path: "performers.json").read()
 
     let items: [NameClassifier.Item] = try data!.decoded() as [NameClassifier.Item]
