@@ -302,6 +302,17 @@ open class AudioKnigiApiService {
           newTracks = items
         }
       }
+
+//      if let data1 = response.data, let tracks = try apiClient.decode(data1, to: Tracks2.self) {
+//        //print(tracks)
+//        if let data2 = tracks.items.data(using: .utf8), let items = try apiClient.decode(data2, to: [Track2].self) {
+//          //print(items)
+//          //newTracks = items
+//
+//          "\(tracks.srv)b/34614/pl.m3u8?res=r&expires=e"
+//          // https://h5.akniga.club/b/34614/pl.m3u8?res=q6Oe8pWrvpA1gUdteZIyEw&expires=1688692607
+//        }
+//      }
     }
 
     return newTracks
