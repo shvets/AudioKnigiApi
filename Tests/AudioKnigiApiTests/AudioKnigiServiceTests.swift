@@ -147,9 +147,9 @@ class AudioKnigiServiceTests: XCTestCase {
   }
 
   func testGetAudioTracks() async throws {
-    let url = "\(AudioKnigiApiService.SiteUrl)/pratchett-terri-volnyy-narodec"
+    let url = "\(AudioKnigiApiService.SiteUrl)/pratchett-terri-volnye-malcy-audiokniga"
 
-    let result = try await subject.getAudioTracks(url)
+    let result = try subject.getAudioTracks(url)
 
     print(try result.prettify())
 
