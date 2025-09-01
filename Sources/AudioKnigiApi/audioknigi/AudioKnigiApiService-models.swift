@@ -3,9 +3,11 @@ import SimpleHttpClient
 import Codextended
 
 extension AudioKnigiApiService {
-  public typealias BookItem = [String: String]
+  public struct BookItem: Codable, Sendable {
+    public let value: [String: String]
+  }
 
-  public struct Pagination: Codable {
+  public struct Pagination: Codable, Sendable {
     let page: Int
     let pages: Int
     let has_previous: Bool
@@ -19,7 +21,7 @@ extension AudioKnigiApiService {
     }
   }
 
-  public struct BookResults: Codable {
+  public struct BookResults: Codable, Sendable {
     public let items: [BookItem]
     let pagination: Pagination?
 
@@ -30,7 +32,7 @@ extension AudioKnigiApiService {
     }
   }
 
-  public struct PersonName {
+  public struct PersonName: Sendable {
     public let name: String
     public let id: String
 
@@ -40,7 +42,7 @@ extension AudioKnigiApiService {
     }
   }
 
-  public struct Tracks: Codable {
+  public struct Tracks: Codable, Sendable {
     public let aItems: String
     public let bStateError: Bool
     public let fstate: Bool
@@ -118,7 +120,7 @@ extension AudioKnigiApiService {
 //    }
 //  }
 
-  public struct Track: Codable {
+  public struct Track: Codable, Sendable {
     public let albumName: String?
     public let title: String
     public let url: String?

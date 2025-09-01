@@ -61,7 +61,7 @@ class AudioKnigiServiceTests: XCTestCase {
   func testGetAuthorBooks() async throws {
     let result = try await subject.getAuthors()
 
-    if let id = result.items.first!["id"] {
+    if let id = result.items.first!.value["id"] {
       let books = try await subject.getBooks(path: id)
 
       print(try books.prettify())
@@ -73,7 +73,7 @@ class AudioKnigiServiceTests: XCTestCase {
   func testGetPerformersBooks() async throws {
     let result = try await subject.getPerformers()
 
-    if let id = result.items.first!["id"] {
+    if let id = result.items.first!.value["id"] {
       let books = try await subject.getBooks(path: id)
 
       print(try books.prettify())
@@ -116,7 +116,7 @@ class AudioKnigiServiceTests: XCTestCase {
     let genres = try await subject.getGenres(page: 1)
 
     if let item = genres.first {
-      if let id = item["id"] {
+      if let id = item.value["id"] {
         let genre = try await subject.getGenre(path: id)
 
         print(try genre.prettify())
@@ -149,7 +149,7 @@ class AudioKnigiServiceTests: XCTestCase {
   func testGetAudioTracks() async throws {
     let url = "\(AudioKnigiApiService.SiteUrl)/pratchett-terri-volnye-malcy-audiokniga"
 
-    let result = try subject.getAudioTracks(url)
+    let result = try await subject.getAudioTracks(url)
 
     print(try result.prettify())
 

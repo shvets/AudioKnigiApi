@@ -6,9 +6,9 @@
 //
 
 import Foundation
-import JavaScriptCore
+@preconcurrency import JavaScriptCore
 
-private var cryptoJScontext = JSContext()
+private let cryptoJScontext = JSContext()
 
 open class CryptoJS {
     func getMainBundle() -> Bundle {

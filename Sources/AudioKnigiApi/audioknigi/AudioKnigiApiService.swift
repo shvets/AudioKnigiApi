@@ -6,12 +6,12 @@ import SimpleHttpClient
 open class AudioKnigiApiService {
   public static let SiteUrl = "https://akniga.org"
 
-  private static let AES = CryptoJS.AES()
+  @MainActor private static let AES = CryptoJS.AES()
 
   let apiClient = ApiClient(URL(string: SiteUrl)!)
 
-  public static let Authors = getItemsInGroups(Bundle.module.path(forResource: "authors-in-groups", ofType: "json")!)
-  public static let Performers = getItemsInGroups(Bundle.module.path(forResource: "performers-in-groups", ofType: "json")!)
+  @MainActor public static let Authors = getItemsInGroups(Bundle.module.path(forResource: "authors-in-groups", ofType: "json")!)
+  @MainActor public static let Performers = getItemsInGroups(Bundle.module.path(forResource: "performers-in-groups", ofType: "json")!)
 
   public init() {}
 
@@ -86,7 +86,7 @@ open class AudioKnigiApiService {
       let thumb = try link.select("img").attr("src")
       let description = try element.select("span[class=description__article-main]").text()
 
-      items.append(["type": "book", "id": href, "name": name, "thumb": thumb, "description": description])
+      items.append(BookItem(value: ["type": "book", "id": href, "name": name, "thumb": thumb, "description": description]))
     }
 
     let pagination = try extractPaginationData(document: document, path: path, page: page)
@@ -123,7 +123,7 @@ open class AudioKnigiApiService {
         let id = String(href[index ..< href.endIndex]) + "/"
 
         if let filteredId = id.removingPercentEncoding {
-          collection.append(["type": "collection", "id": filteredId, "name": name, "thumb": thumb])
+          collection.append(BookItem(value: ["type": "collection", "id": filteredId, "name": name, "thumb": thumb]))
         }
       }
 
@@ -155,7 +155,7 @@ open class AudioKnigiApiService {
 
         let thumb = try link.select("img").attr("src")
 
-        collection.append(["type": "genre", "id": id, "name": name, "thumb": thumb])
+        collection.append(BookItem(value: ["type": "genre", "id": id, "name": name, "thumb": thumb]))
       }
     }
 
@@ -254,7 +254,7 @@ open class AudioKnigiApiService {
     return result
   }
 
-  public func getAudioTracks(_ url: String) throws -> [Track] {
+  @MainActor public func getAudioTracks(_ url: String) throws -> [Track] {
     var newTracks = [Track]()
 
     let (cookie, securityLsKey) = try getCookieAndSecurityLsKey()
@@ -396,7 +396,7 @@ open class AudioKnigiApiService {
     return security_ls_key
   }
 
-  func getSecurityParams(bid: Int, securityLsKey: String) -> String {
+  @MainActor func getSecurityParams(bid: Int, securityLsKey: String) -> String {
     let secretPassphrase = "EKxtcg46V";
 
     let encrypted = AudioKnigiApiService.AES.encrypt("\"" + securityLsKey + "\"", password: secretPassphrase)
